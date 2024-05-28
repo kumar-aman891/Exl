@@ -1,0 +1,36 @@
+USE DBAccessRoles;
+
+INSERT INTO Users VALUES('Mark'); INSERT INTO Users VALUES('David');
+INSERT INTO AccessTypes VALUES('Read'); INSERT INTO AccessTypes VALUES('Write');  INSERT INTO AccessTypes VALUES('Read/Write');
+INSERT INTO Groups VALUES('Group 1'); INSERT INTO Groups VALUES('Group 2'); 
+SET IDENTITY_INSERT AccessMapping ON;
+
+INSERT INTO AccessMapping (ID, GroupID, UserID)
+VALUES (1, 1, 1);
+
+INSERT INTO AccessMapping (ID, GroupID, UserID)
+VALUES (2, 1, 2);  -- Manually increment ID for each insert
+
+INSERT INTO AccessMapping (ID, GroupID, UserID)
+VALUES (3, 1, 3);  -- Manually increment ID for each insert
+
+SET IDENTITY_INSERT AccessMapping OFF;
+
+
+SELECT * FROM Users;
+SELECT * FROM AccessTypes;
+SELECT * FROM Groups;
+SELECT * FROM AccessMapping;
+
+
+CREATE PROCEDURE GetUserDetails 
+    @groupId int  
+AS  
+BEGIN  
+    SELECT UserID, Name, GroupName, AccessLevel
+	FROM Groups G
+	INNER JOIN AccessMapping AM ON AM.GroupID = G.ID
+    INNER JOIN Users U ON AM.UserID = U.ID
+	INNER JOIN AccessTypes AT ON AT.ID = AM.ID
+    WHERE G.ID = @groupId;
+END
